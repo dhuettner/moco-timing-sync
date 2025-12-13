@@ -10,7 +10,17 @@
 
 ## 🇩🇪 Dokumentation (Deutsch)
 
-Dieses Tool dient der Synchronisierung von Projektdaten aus **Moco** in die **Timing App**. Es hilft dabei, die Projektstruktur aktuell zu halten und manuelle Arbeit zu vermeiden.
+Dieses Tool dient der Synchronisierung von Projektdaten aus **[Moco](https://www.mocoapp.com/)** in die **[Timing App](https://timingapp.com/)**. Es hilft dabei, die Projektstruktur aktuell zu halten und manuelle Arbeit zu vermeiden.
+
+### 💡 Why this tool? (Storytime)
+
+Hand aufs Herz: Zeiterfassung ist nervig. Zwar bietet Moco eine integrierte Erfassung, aber im Agentur-Alltag mit ständigen Kontextwechseln, Telefonaten und Meetings ist die **[Timing App](https://timingapp.com/)** mein absoluter Lebensretter. Sie trackt im Hintergrund jeden Schritt und hilft mir, am Ende des Tages nichts zu vergessen.
+
+Mein Problem war der "Gap" dazwischen: Ich wollte sicherstellen, dass meine aktive Projektlandschaft aus Moco automatisch in Timing verfügbar ist, ohne manuelle Pflege. Ich wollte einen Workflow, der "just works".
+
+Als kleiner Code-Fetischist konnte ich es nicht lassen, mir dafür eine eigene Lösung zu bauen. Das Ergebnis ist dieses Tool: Ein Bindeglied, das meine Moco-Projekte sauber ins Timing-Universum spiegelt – automatisiert, intelligent und stressfrei.
+
+---
 
 ### 📋 Zusammenfassung
 
@@ -60,7 +70,7 @@ Das Tool vergleicht die aktiven Projekte und Kunden, die in Moco hinterlegt sind
 
 ## 🇺🇸 Documentation (English)
 
-A robust utility to keep your **Moco** project structure perfectly synchronized with the **Timing App**. Automate your workflow, eliminate manual maintenance, and ensure your time tracking is always ready to go.
+A robust utility to keep your **[Moco](https://www.mocoapp.com/)** project structure perfectly synchronized with the **[Timing App](https://timingapp.com/)**. Automate your workflow, eliminate manual maintenance, and ensure your time tracking is always ready to go.
 
 ### 📋 Overview
 
