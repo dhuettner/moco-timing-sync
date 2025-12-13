@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moco to Timing Sync</title>
+    <style>
+        :root {
+            --bg-color: #1a1b26;
+            --card-bg: #24283b;
+            --text-color: #a9b1d6;
+            --accent-color: #7aa2f7;
+            --danger-color: #f7768e;
+            --success-color: #9ece6a;
+            --button-bg: #3b4261;
+            --border-color: #414868;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 900px;
+            max-width: 95%;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin: 0;
+            font-weight: 300;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        .view-step {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 1rem;
+            overflow: hidden;
+        }
+
+        .view-step.active {
+            display: flex;
+        }
+
+        /* Table Styles */
+        .table-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #1f2335;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .type-create {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .type-delete {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+
+        .type-archive {
+            color: #e0af68;
+            /* Orange for Archive */
+            font-weight: bold;
+        }
+
+        .type-link {
+            color: #7aa2f7;
+            /* Blue */
+            font-weight: bold;
+        }
+
+        .type-rename {
+            color: #bb9af7;
+            /* Purple */
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: #1a1b26;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(122, 162, 247, 0.1);
+        }
+
+        .btn-execute {
+            background-color: #e0af68;
+            color: #1a1b26;
+        }
+
+        .btn-execute:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        /* Logs */
+        .logs {
+            background-color: #16161e;
+            border-radius: 6px;
+            padding: 1rem;
+            flex-grow: 1;
+            overflow-y: auto;
+            font-family: monospace;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-error {
+            color: var(--danger-color);
+        }
+
+        .log-info {
+            color: var(--text-color);
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            color: white;
+            font-size: 1.5rem;
+            backdrop-filter: blur(2px);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Moco to Timing Sync</h1>
+
+        <!-- STEP 1: INITIAL -->
+        <div id="step1" class="view-step active" style="justify-content: center; align-items: center; gap: 2rem;">
+            <div style="text-align:center;">
+                <h2 style="color: var(--accent-color); font-weight:300;">Ready to Sync</h2>
+                <p style="color: var(--text-color); opacity: 0.8;">Scan Moco and Timing to find discrepancies.</p>
+            </div>
+
+            <div class="actions" style="border-top: none;">
+                <button class="btn-secondary" onclick="openMappings()">⚙️ Manage Mappings</button>
+                <button class="btn-primary" onclick="startScan()">Scan for Changes 🔍</button>
+            </div>
+
+            <!-- Cleanup Section -->
+            <div
+                style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem; width: 100%; text-align: center;">
+                <p style="margin-bottom: 0.5rem; font-size: 0.9rem; color: #e0af68;">Cleanup: Archive unused projects
+                </p>
+                <div style="display: flex; justify-content: center; gap: 8px; align-items: center;">
+                    <label style="font-size: 0.8rem;">From:</label>
+                    <input type="date" id="cleanupStart"
+                        style="padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: #1f2335; color: white;">
+                    <label style="font-size: 0.8rem;">To:</label>
+                    <input type="date" id="cleanupEnd"
+                        style="padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: #1f2335; color: white;">
+                    <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.9rem;"
+                        onclick="startInactiveScan()">Check Inactivity</button>
+                </div>
+            </div>
+
+            <div id="step1-status"
+                style="margin-top: 2rem; color: var(--text-color); font-family: monospace; opacity: 0.7;">
+                > System Ready.
+            </div>
+        </div>
+
+        <!-- STEP 2: REVIEW -->
+        <div id="step2" class="view-step">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Review Proposed Changes</span>
+                <span id="selectedCount" style="color:var(--accent-color);">0 items selected</span>
+            </div>
+
+            <div class="table-container">
+                <table id="changesTable">
+                    <thead>
+                        <tr>
+                            <th width="40"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"></th>
+                            <th>Type</th>
+                            <th>Customer</th>
+                            <th>Project</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody id="changesBody"></tbody>
+                </table>
+            </div>
+
+            <div class="actions">
+                <button class="btn-secondary" onclick="reset()">Cancel</button>
+                <button class="btn-execute" id="btnSync" onclick="executeSync()">Sync Selected Items 🚀</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: EXECUTION LOGS -->
+        <div id="step3" class="view-step">
+            <span>Execution Logs</span>
+            <div class="logs" id="logContainer"></div>
+            <div class="actions">
+                <button class="btn-primary" onclick="reset()">Done / Rescan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAPPINGS MODAL -->
+    <div id="mappingModal" class="loading-overlay hidden"
+        style="z-index: 2000; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);">
+        <div class="container"
+            style="height: auto; width: 600px; max-width: 90%; border: 1px solid var(--accent-color); box-shadow: 0 0 50px rgba(0,0,0,0.5);">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                <h2 style="margin:0; font-size:1.5rem; color: var(--accent-color);">Name Mappings</h2>
+                <button onclick="closeMappings()"
+                    style="background:transparent; border:none; color:var(--text-color); font-size:2rem; line-height:1; padding:0 8px; cursor:pointer;">&times;</button>
+            </div>
+
+            <p style="font-size: 0.9rem; color: #7aa2f7; margin-top: 0;">Map exact Moco Customer names to Timing Project
+                names.</p>
+
+            <div class="table-container" style="max-height: 400px; margin-bottom: 1rem;">
+                <table id="mappingTable">
+                    <thead>
+                        <tr>
+                            <th>Moco Name (Exact)</th>
+                            <th>Timing Name</th>
+                            <th width="40"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="mappingBody"></tbody>
+                </table>
+            </div>
+
+            <div
+                style="background: #1f2335; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.8rem; font-weight: bold; color: var(--text-color);">Add New Mapping:</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="newMoco" placeholder="Exact Moco Name..."
+                        style="flex:1; padding: 10px; border-radius: 4px; border: 1px solid var(--border-color); background: #16161e; color: white;">
+                    <input type="text" id="newTiming" placeholder="Target Timing Name..."
+                        style="flex:1; padding: 10px; border-radius: 4px; border: 1px solid var(--border-color); background: #16161e; color: white;">
+                    <button class="btn-primary" onclick="addMapping()" style="padding: 0 16px;">Add</button>
+                </div>
+            </div>
+
+            <div class="actions"
+                style="justify-content: flex-end; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                <button class="btn-secondary" onclick="closeMappings()">Cancel</button>
+                <button class="btn-execute" onclick="saveMappings()">Save Integration 💾</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" class="loading-overlay hidden">
+        Processing...
+    </div>
+
+    <script>
+        let currentChanges = [];
+        let mappings = {};
+
+        // Navigation
+        function showStep(id) {
+            document.querySelectorAll('.view-step').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            // Hide Step 1 buttons if not in Step 1? logic simplified:
+            if (id === 'step1') {
+                document.querySelector('.container > .actions').style.display = 'flex'; // Main actions
+            }
+        }
+        function setLoading(visible) {
+            document.getElementById('loading').classList.toggle('hidden', !visible);
+        }
+
+        function reset() {
+            currentChanges = [];
+            document.getElementById('changesBody').innerHTML = '';
+            document.getElementById('logContainer').innerHTML = '';
+            showStep('step1');
+            document.querySelector('.container > .actions').style.display = 'flex';
+        }
+
+        // --- MAPPINGS UI ---
+        async function openMappings() {
+            setLoading(true);
+            try {
+                const res = await fetch('/api/mappings');
+                const data = await res.json();
+                if (data.success) {
+                    mappings = data.mappings;
+                    renderMappings();
+                    document.getElementById('mappingModal').classList.remove('hidden');
+                }
+            } catch (e) {
+                alert("Error loading mappings: " + e.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function closeMappings() {
+            document.getElementById('mappingModal').classList.add('hidden');
+        }
+
+        function renderMappings() {
+            const tbody = document.getElementById('mappingBody');
+            tbody.innerHTML = '';
+            Object.keys(mappings).forEach(mocoName => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${mocoName}</td>
+                    <td style="color: var(--success-color);">${mappings[mocoName]}</td>
+                    <td><button style="padding:4px 8px; font-size:0.8rem; background: var(--danger-color); color:white;" onclick="removeMapping('${mocoName.replace(/'/g, "\\'")}')">×</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addMapping() {
+            const m = document.getElementById('newMoco').value.trim();
+            const t = document.getElementById('newTiming').value.trim();
+            if (m && t) {
+                mappings[m] = t;
+                renderMappings();
+                document.getElementById('newMoco').value = '';
+                document.getElementById('newTiming').value = '';
+            }
+        }
+
+        function removeMapping(key) {
+            delete mappings[key];
+            renderMappings();
+        }
+
+        async function saveMappings() {
+            setLoading(true);
+            try {
+                await fetch('/api/mappings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mappings })
+                });
+                closeMappings();
+                // Refresh main view log
+                const logDiv = document.getElementById('logContainer');
+                const entry = document.createElement('div');
+                entry.className = 'log-entry log-success';
+                entry.innerText = `[${new Date().toLocaleTimeString()}] Mappings saved.`;
+                logDiv.appendChild(entry);
+            } catch (e) {
+                alert("Error saving: " + e.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // --- STEP 1: SCAN ---
+        async function startScan() {
+            setLoading(true);
+            // Hide main buttons during scan flow
+            document.querySelector('.container > .actions').style.display = 'none';
+
+            try {
+                const res = await fetch('/api/scan', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    currentChanges = data.changes;
+                    renderChanges(currentChanges);
+                    showStep('step2');
+                } else {
+                    alert("Error scanning: " + data.error);
+                }
+            } catch (e) {
+                alert("Network Error: " + e.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function startInactiveScan() {
+            const start = document.getElementById('cleanupStart').value;
+            const end = document.getElementById('cleanupEnd').value;
+
+            if (!start || !end) {
+                alert("Please select both From and To dates.");
+                return;
+            }
+
+            setLoading(true);
+            document.querySelector('.container > .actions').style.display = 'none';
+
+            try {
+                const res = await fetch('/api/scan-inactive', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ startDate: start, endDate: end })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    currentChanges = data.changes;
+                    renderChanges(currentChanges);
+                    showStep('step2');
+                } else {
+                    alert("Error scanning: " + data.error);
+                }
+            } catch (e) {
+                alert("Network Error: " + e.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // --- STEP 2: REVIEW ---
+        function renderChanges(changes) {
+            const tbody = document.getElementById('changesBody');
+            tbody.innerHTML = '';
+
+            if (changes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2rem;">No changes found. Everything is in sync!</td></tr>';
+                document.getElementById('btnSync').disabled = true;
+                return;
+            }
+
+            document.getElementById('btnSync').disabled = false;
+
+            changes.forEach((change, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td><input type="checkbox" class="change-check" data-idx="${index}" checked onchange="updateCount()"></td>
+                <td class="type-${change.type}">${change.type.toUpperCase()}</td>
+                <td>${change.customer}</td>
+                <td>${change.title}</td>
+                <td style="opacity: 0.7; font-size: 0.8rem;">${change.reason}</td>
+            `;
+                tbody.appendChild(tr);
+            });
+            updateCount();
+        }
+
+        function toggleAll(source) {
+            document.querySelectorAll('.change-check').forEach(c => c.checked = source.checked);
+            updateCount();
+        }
+
+        function updateCount() {
+            const checked = document.querySelectorAll('.change-check:checked').length;
+            document.getElementById('selectedCount').innerText = `${checked} items selected`;
+            document.getElementById('btnSync').innerText = `Sync ${checked} Selected Items 🚀`;
+            document.getElementById('btnSync').disabled = checked === 0;
+        }
+
+        // --- STEP 3: EXECUTE ---
+        async function executeSync() {
+            const selectedIndices = Array.from(document.querySelectorAll('.change-check:checked')).map(cb => parseInt(cb.getAttribute('data-idx')));
+            const selectedChanges = selectedIndices.map(i => currentChanges[i]);
+
+            if (selectedChanges.length === 0) return;
+
+            showStep('step3');
+            const logsDiv = document.getElementById('logContainer');
+            logsDiv.innerHTML = '<div class="log-info">> Starting sync...</div>';
+
+            setLoading(true);
+            try {
+                const res = await fetch('/api/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ changes: selectedChanges })
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    result.logs.forEach(log => {
+                        const div = document.createElement('div');
+                        div.className = log.type === 'error' ? 'log-error' : 'log-info';
+                        div.innerText = `[${new Date(log.timestamp).toLocaleTimeString()}] ${log.message}`;
+                        logsDiv.appendChild(div);
+                    });
+                    const doneDiv = document.createElement('div');
+                    doneDiv.className = 'log-info';
+                    doneDiv.style.color = 'var(--success-color)';
+                    doneDiv.innerText = '> Operation Completed!';
+                    logsDiv.appendChild(doneDiv);
+                } else {
+                    logsDiv.innerHTML += `<div class="log-error">Error: ${result.error}</div>`;
+                }
+            } catch (e) {
+                logsDiv.innerHTML += `<div class="log-error">Network Error: ${e.message}</div>`;
+            } finally {
+                setLoading(false);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
