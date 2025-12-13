@@ -72,6 +72,16 @@ Das Tool vergleicht die aktiven Projekte und Kunden, die in Moco hinterlegt sind
 
 A robust utility to keep your **[Moco](https://www.mocoapp.com/)** project structure perfectly synchronized with the **[Timing App](https://timingapp.com/)**. Automate your workflow, eliminate manual maintenance, and ensure your time tracking is always ready to go.
 
+### 💡 Why this tool? (Storytime)
+
+Let's be honest: time tracking is annoying. While Moco offers integrated tracking, in everyday agency life with constant context switching, calls, and meetings, the **[Timing App](https://timingapp.com/)** is my absolute lifesaver. It tracks every step in the background and helps me ensure nothing is forgotten at the end of the day.
+
+My problem was the "gap" in between: I wanted to ensure my active project landscape from Moco was automatically available in Timing, without manual maintenance. I wanted a workflow that "just works".
+
+As a bit of a code fetishist, I couldn't resist building my own solution for this. The result is this tool: A link that cleanly mirrors my Moco projects into the Timing universe – automated, intelligent, and stress-free.
+
+---
+
 ### 📋 Overview
 
 This tool acts as a bridge between Moco and Timing. It analyzes your active clients and projects, compares them with your Timing folders, and provides a sleek "Scan & Execute" interface to handle updates.
