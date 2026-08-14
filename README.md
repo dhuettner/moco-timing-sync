@@ -18,7 +18,7 @@ Hand aufs Herz: Zeiterfassung ist nervig. Zwar bietet Moco eine integrierte Erfa
 
 Mein Problem war der "Gap" dazwischen: Ich wollte sicherstellen, dass meine aktive Projektlandschaft aus Moco automatisch in Timing verfügbar ist, ohne manuelle Pflege. Ich wollte einen Workflow, der "just works".
 
-Als kleiner Code-Fetischist konnte ich es nicht lassen, mir dafür eine eigene Lösung zu bauen. Das Ergebnis ist dieses Tool: Ein Bindeglied, das meine Moco-Projekte sauber ins Timing-Universum spiegelt – automatisiert, intelligent und stressfrei.
+Als kleiner Code-Fetischist konnte ich es nicht lassen, mir dafür eine eigene Lösung zu bauen. Das Ergebnis ist dieses Tool: Ein Bindeglied, das meine Moco-Projekte sauber ins Timing-Universum spiegelt: automatisiert, intelligent und stressfrei.
 
 ---
 
@@ -78,7 +78,7 @@ Let's be honest: time tracking is annoying. While Moco offers integrated trackin
 
 My problem was the "gap" in between: I wanted to ensure my active project landscape from Moco was automatically available in Timing, without manual maintenance. I wanted a workflow that "just works".
 
-As a bit of a code fetishist, I couldn't resist building my own solution for this. The result is this tool: A link that cleanly mirrors my Moco projects into the Timing universe – automated, intelligent, and stress-free.
+As a bit of a code fetishist, I couldn't resist building my own solution for this. The result is this tool: A link that cleanly mirrors my Moco projects into the Timing universe: automated, intelligent, and stress-free.
 
 ---
 
@@ -86,7 +86,7 @@ As a bit of a code fetishist, I couldn't resist building my own solution for thi
 
 This tool acts as a bridge between Moco and Timing. It analyzes your active clients and projects, compares them with your Timing folders, and provides a sleek "Scan & Execute" interface to handle updates.
 
-**Philosophy:** We prioritize data safety. Projects are never deleted—only archived.
+**Philosophy:** We prioritize data safety. Projects are never deleted, only archived.
 
 ### ✨ Key Features
 
